@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Send, Bot, User, Sparkles, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Loader2, RotateCcw } from 'lucide-react';
 import { queryAuri } from './api/auriApi';
 import { PRODUCT_OPTIONS } from './data/demoData';
 
@@ -134,6 +134,16 @@ function AuriChat({ selectedProduct }) {
       {/* Input */}
       <div className="border-t border-auri-gray/20 pt-4">
         <div className="flex items-end gap-3">
+          {messages.length > 0 && (
+            <button
+              onClick={() => setMessages([])}
+              disabled={isLoading}
+              title="New conversation"
+              className="px-3 py-3 border border-auri-gray/30 rounded-lg text-auri-gray hover:text-auri-white hover:border-auri-blue/50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            >
+              <RotateCcw size={16} />
+            </button>
+          )}
           <div className="flex-1 relative">
             <textarea
               ref={inputRef}
