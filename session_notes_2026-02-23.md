@@ -37,12 +37,18 @@ Soliris (eculizumab) vs Ultomiris (ravulizumab) — all tabs filter by selected 
 - 5 competitors: Piasky, Fabhalta, Empaveli, Zilbrysq, Biosimilar Soliris
 - 5 KITs: Biosimilar Switching, Complement Pathway Education, Breakthrough Hemolysis, Oral Competitors, Diagnosis Pathways
 
+## Real Data (PubMed + ClinicalTrials.gov)
+- `src/data/pubmedData.js` — 90+ real publications: Soliris (20), Ultomiris (20), 4 competitors (10 each), 6 KOLs (5 each)
+- `src/data/clinicalTrialsData.js` — 81+ real trials: Soliris (15), Ultomiris (15), competitors (36), landmark completed (15)
+- Data fetched Feb 2026 from PubMed E-utilities and ClinicalTrials.gov v2 APIs
+- Integrated into RAG layer and keyword fallback for Auri chat
+
 ## API Layer
-- `src/api/auriApi.js` — Main entry, Claude → OpenAI → keyword fallback
+- `src/api/auriApi.js` — Main entry, Claude → OpenAI → keyword fallback (now handles publication/trial queries)
 - `src/api/claudeApi.js` — Anthropic SDK (claude-sonnet-4-5)
 - `src/api/openaiApi.js` — OpenAI SDK (gpt-4o-mini)
-- `src/api/promptBuilder.js` — System prompt with Alexion context
-- `src/api/rag.js` — Keyword-based RAG retrieval from mock data
+- `src/api/promptBuilder.js` — System prompt with Alexion context, no-emoji instruction
+- `src/api/rag.js` — Keyword-based RAG retrieval from mock + real data (publications, trials, KOL papers)
 
 ## Key Design Decisions
 - Soliris data reflects mature product under biosimilar/oral competitor pressure (declining sentiment)
@@ -50,14 +56,19 @@ Soliris (eculizumab) vs Ultomiris (ravulizumab) — all tabs filter by selected 
 - Biosimilar Soliris: negative sentiment for Soliris, positive for Ultomiris (conversion catalyst)
 - KOL productAlignment: hematologists/nephrologists → both; some neurologists → Soliris only
 
+## UI Fixes Applied
+- KOL tier badges: added `whitespace-nowrap`, `inline-block`, `px-3` to prevent text wrapping
+- KOL product filtering: rebalanced alignments — Soliris 13, Ultomiris 11, 6 shared
+- Sentiment badges on KIT Performance tab: fixed field name (`kit.sentiment` → `kit.currentSentiment`) and added `sentimentLabel()` to convert numeric scores to colored labels
+
 ## Vercel
 - Connected to GitHub via Vercel CLI (`npx vercel --yes`)
 - Auto-deploys on push to master
-- No env vars set yet (keyword fallback works without API keys)
+- Env vars added: `REACT_APP_ANTHROPIC_API_KEY`, `REACT_APP_OPENAI_API_KEY`
 
 ## Pending / Future Improvements
-- Add env vars on Vercel for Claude/OpenAI API keys
 - Polish UI, responsive design
 - Add to demo-landing page
 - Consider pulling KOL components from aurivian-kol-demo repo
+- Further Auri prompt tuning for Alexion-specific queries
 - Session notes reference: user mentioned https://github.com/z-aurivian/aurivian-kol-demo as potential source for KOL patterns
