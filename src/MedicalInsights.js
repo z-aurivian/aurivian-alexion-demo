@@ -37,15 +37,30 @@ function StatusBadge({ status }) {
   );
 }
 
+function sentimentLabel(val) {
+  if (typeof val === 'string') return val;
+  if (typeof val !== 'number') return 'N/A';
+  if (val >= 0.7) return 'Very Positive';
+  if (val >= 0.5) return 'Positive';
+  if (val >= 0.35) return 'Mixed';
+  if (val >= 0.2) return 'Negative';
+  return 'Very Negative';
+}
+
 function SentimentBadge({ sentiment }) {
-  const s = (sentiment || '').toLowerCase();
-  if (s === 'positive' || s === 'very positive')
-    return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">{sentiment}</span>;
-  if (s === 'negative' || s === 'very negative')
-    return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">{sentiment}</span>;
-  if (s === 'mixed')
-    return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">{sentiment}</span>;
-  return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-auri-gray/20 text-auri-gray border border-auri-gray/30">{sentiment}</span>;
+  const label = sentimentLabel(sentiment);
+  const s = label.toLowerCase();
+  if (s.includes('very positive'))
+    return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">{label}</span>;
+  if (s.includes('positive'))
+    return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">{label}</span>;
+  if (s.includes('very negative'))
+    return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">{label}</span>;
+  if (s.includes('negative'))
+    return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">{label}</span>;
+  if (s.includes('mixed'))
+    return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">{label}</span>;
+  return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-auri-gray/20 text-auri-gray border border-auri-gray/30">{label}</span>;
 }
 
 function ConfidenceBadge({ confidence }) {
@@ -138,7 +153,7 @@ function KITPerformance({ data, themes, expandedItems, toggleExpand }) {
                         {kit.percentChange >= 0 ? '+' : ''}{kit.percentChange}%
                       </span>
                     </td>
-                    <td className="px-4 py-3"><SentimentBadge sentiment={kit.sentiment} /></td>
+                    <td className="px-4 py-3"><SentimentBadge sentiment={kit.currentSentiment} /></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-16 h-1.5 bg-auri-black rounded-full overflow-hidden">
