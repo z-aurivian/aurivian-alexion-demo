@@ -4,6 +4,8 @@ import { buildSystemPrompt } from './promptBuilder';
 import { retrieveContext } from './rag';
 import { KIT_SCORECARDS, COMPETITOR_DATA, KOL_DATA } from '../data/demoData';
 import { STRATEGIC_IMPERATIVES, COMPETITIVE_LANDSCAPE, PIPELINE_INTELLIGENCE } from '../data/strategicContent';
+import { PUBMED_SOLIRIS, PUBMED_ULTOMIRIS } from '../data/pubmedData';
+import { TRIALS_SOLIRIS, TRIALS_ULTOMIRIS, TRIALS_COMPLETED_LANDMARK } from '../data/clinicalTrialsData';
 
 function keywordFallback(query, selectedProduct) {
   const q = query.toLowerCase();
@@ -57,6 +59,28 @@ function keywordFallback(query, selectedProduct) {
         `### ${s.name} (${s.category})\n${s.description}\n\n**Success Metrics:** ${s.successMetrics?.join(', ')}`
       ).join('\n\n')}`;
     }
+  }
+
+  if (q.includes('publi') || q.includes('paper') || q.includes('journal') || q.includes('literature') || q.includes('pubmed')) {
+    const pubs = selectedProduct === 'soliris' ? PUBMED_SOLIRIS : PUBMED_ULTOMIRIS;
+    const productName = selectedProduct === 'soliris' ? 'Soliris (eculizumab)' : 'Ultomiris (ravulizumab)';
+    return `## Recent Publications — ${productName}\n\nBased on real PubMed data (sourced Feb 2026):\n\n${pubs.slice(0, 10).map((p, i) =>
+      `${i + 1}. **${p.title}**\n   - ${p.authors.slice(0, 3).join(', ')}${p.authors.length > 3 ? ' et al.' : ''}\n   - *${p.journal}* (${p.pubDate})\n   - PMID: ${p.pmid}${p.doi ? ` | DOI: ${p.doi}` : ''}`
+    ).join('\n\n')}\n\n*${pubs.length} total publications tracked.*`;
+  }
+
+  if (q.includes('trial') || q.includes('clinical') || q.includes('recruit')) {
+    const trials = selectedProduct === 'soliris' ? TRIALS_SOLIRIS : TRIALS_ULTOMIRIS;
+    const productName = selectedProduct === 'soliris' ? 'Soliris (eculizumab)' : 'Ultomiris (ravulizumab)';
+    return `## Active Clinical Trials — ${productName}\n\nBased on real ClinicalTrials.gov data (sourced Feb 2026):\n\n${trials.slice(0, 8).map((t, i) =>
+      `${i + 1}. **${t.title}**\n   - ${t.nctId} | ${t.status} | ${t.phase || 'N/A'}\n   - Sponsor: ${t.sponsor}\n   - Enrollment: ${t.enrollment} | Completion: ${t.completionDate || 'TBD'}`
+    ).join('\n\n')}\n\n*${trials.length} active trials tracked.*`;
+  }
+
+  if (q.includes('landmark') || q.includes('pivotal')) {
+    return `## Landmark Clinical Trials\n\n${TRIALS_COMPLETED_LANDMARK.slice(0, 10).map((t, i) =>
+      `${i + 1}. **${t.title}**\n   - ${t.nctId} | ${t.status} | ${t.phase || 'N/A'}\n   - Sponsor: ${t.sponsor} | Enrollment: ${t.enrollment}`
+    ).join('\n\n')}`;
   }
 
   // Default response

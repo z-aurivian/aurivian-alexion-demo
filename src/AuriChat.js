@@ -9,8 +9,10 @@ const SUGGESTED_QUESTIONS = [
   "What are the top field insights about biosimilar switching readiness?",
   "Summarize competitive threats from oral complement inhibitors",
   "Which KOLs are most aligned with our C5 franchise?",
+  "Show me the latest publications from PubMed for this product",
+  "What active clinical trials are running right now?",
+  "What are the landmark pivotal trials for our complement franchise?",
   "What's the sentiment trend on breakthrough hemolysis management?",
-  "What are Alexion's strategic imperatives for the complement franchise?",
   "Tell me about the pipeline — gefurulimab, Voydeya, and emerging assets",
 ];
 

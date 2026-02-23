@@ -1,5 +1,15 @@
 import { KIT_SCORECARDS, COMPETITOR_DATA, KOL_DATA, PRODUCT_OPTIONS } from '../data/demoData';
 import { STRATEGIC_IMPERATIVES, COMPETITIVE_LANDSCAPE, COMPLEMENT_BIOLOGY, PIPELINE_INTELLIGENCE } from '../data/strategicContent';
+import { PUBMED_SOLIRIS, PUBMED_ULTOMIRIS, PUBMED_COMPETITORS, PUBMED_KOL } from '../data/pubmedData';
+import { TRIALS_SOLIRIS, TRIALS_ULTOMIRIS, TRIALS_COMPETITORS, TRIALS_COMPLETED_LANDMARK } from '../data/clinicalTrialsData';
+
+function formatPub(p) {
+  return `"${p.title}" — ${p.authors.slice(0, 3).join(', ')}${p.authors.length > 3 ? ' et al.' : ''}, *${p.journal}* (${p.pubDate})${p.doi ? `, DOI: ${p.doi}` : ''} [PMID: ${p.pmid}]`;
+}
+
+function formatTrial(t) {
+  return `**${t.nctId}**: "${t.title}" — ${t.status}, ${t.phase || 'N/A'}, Sponsor: ${t.sponsor}, n=${t.enrollment}`;
+}
 
 export function retrieveContext(query, selectedProduct) {
   const q = query.toLowerCase();
@@ -69,6 +79,46 @@ export function retrieveContext(query, selectedProduct) {
         `- **${p.name}**: ${p.mechanism}, ${p.stage}, ${p.indication}. ${p.significance}`
       ).join('\n'));
     }
+  }
+
+  // Real publications (PubMed)
+  if (q.includes('publi') || q.includes('paper') || q.includes('journal') || q.includes('evidence') || q.includes('literature') || q.includes('study') || q.includes('research') || q.includes('pubmed')) {
+    const pubs = selectedProduct === 'soliris' ? PUBMED_SOLIRIS : PUBMED_ULTOMIRIS;
+    context.push('## Recent Publications (PubMed)\n' + pubs.slice(0, 8).map(formatPub).join('\n'));
+  }
+
+  // KOL-specific publications
+  const kolNames = Object.keys(PUBMED_KOL);
+  const matchedKol = kolNames.find(name => q.includes(name));
+  if (matchedKol && PUBMED_KOL[matchedKol]) {
+    context.push(`## Publications by ${matchedKol.charAt(0).toUpperCase() + matchedKol.slice(1)}\n` + PUBMED_KOL[matchedKol].map(formatPub).join('\n'));
+  }
+
+  // Competitor publications
+  if (q.includes('compet') && (q.includes('publi') || q.includes('evidence') || q.includes('literature') || q.includes('paper'))) {
+    const compPubs = Object.entries(PUBMED_COMPETITORS);
+    context.push('## Competitor Publications\n' + compPubs.map(([drug, pubs]) =>
+      `### ${drug}\n` + pubs.slice(0, 3).map(formatPub).join('\n')
+    ).join('\n'));
+  }
+
+  // Clinical trials
+  if (q.includes('trial') || q.includes('clinical') || q.includes('study') || q.includes('recruit') || q.includes('phase') || q.includes('nct')) {
+    const trials = selectedProduct === 'soliris' ? TRIALS_SOLIRIS : TRIALS_ULTOMIRIS;
+    context.push('## Active Clinical Trials\n' + trials.slice(0, 8).map(formatTrial).join('\n'));
+  }
+
+  // Landmark trials
+  if (q.includes('landmark') || q.includes('pivotal') || q.includes('completed') || q.includes('triumph') || q.includes('champion') || q.includes('medusa') || q.includes('prevent')) {
+    context.push('## Landmark Completed Trials\n' + TRIALS_COMPLETED_LANDMARK.slice(0, 8).map(formatTrial).join('\n'));
+  }
+
+  // Competitor trials
+  if (q.includes('compet') && (q.includes('trial') || q.includes('clinical') || q.includes('study'))) {
+    const compTrials = Object.entries(TRIALS_COMPETITORS);
+    context.push('## Competitor Clinical Trials\n' + compTrials.map(([drug, trials]) =>
+      `### ${drug}\n` + trials.slice(0, 3).map(formatTrial).join('\n')
+    ).join('\n'));
   }
 
   return context.join('\n\n');
