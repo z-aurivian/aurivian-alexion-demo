@@ -166,7 +166,7 @@ function KOLManagement({ selectedProduct }) {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${tierColor(kol.engagementTier)}`}>
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${tierColor(kol.engagementTier)}`}>
                         {kol.engagementTier}
                       </span>
                     </td>
