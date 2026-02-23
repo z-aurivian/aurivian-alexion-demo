@@ -1,38 +1,49 @@
-.App {
-  text-align: center;
+.font-michroma {
+  font-family: 'Michroma', sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.chat-message pre {
+  background: #2D2C2C;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 8px 0;
 }
 
-.App-link {
-  color: #61dafb;
+.chat-message code {
+  font-size: 0.85em;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.chat-message ul, .chat-message ol {
+  padding-left: 1.5em;
+  margin: 8px 0;
+}
+
+.chat-message p {
+  margin: 4px 0;
+}
+
+.chat-message table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0;
+}
+
+.chat-message th, .chat-message td {
+  border: 1px solid #8D8C8C;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.chat-message th {
+  background: #2D2C2C;
 }
