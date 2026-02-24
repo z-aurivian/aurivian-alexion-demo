@@ -12,6 +12,7 @@ import {
   COMPETITOR_DATA, MOMENTUM_INDICATORS, WEAK_SIGNALS, SENTIMENT_VELOCITY,
   INSIGHT_SOURCES, INSIGHT_IMPACTS, KIT_RELEVANCE_TREND
 } from './data/demoData';
+import { MARKET_ACCESS_INTELLIGENCE } from './data/strategicContent';
 
 const TABS = [
   { label: 'KIT Performance & Evolution', icon: Activity },
@@ -400,18 +401,35 @@ function CompetitiveIntelligence({ competitors, expandedItems, toggleExpand }) {
         </div>
       </section>
 
-      {/* Market Access Note */}
+      {/* Market Access Intelligence */}
       <section>
-        <div className="bg-auri-dark border border-auri-blue/20 rounded-xl p-5">
-          <div className="flex items-start gap-3">
-            <AlertTriangle size={18} className="text-auri-blue mt-0.5 flex-shrink-0" />
-            <div>
-              <h4 className="text-sm font-semibold text-auri-white mb-1">Market Access Intelligence</h4>
-              <p className="text-sm text-auri-gray leading-relaxed">
-                Market access dynamics, formulary positioning, and payer sentiment data are integrated from field intelligence reports.
-                Trends in reimbursement discussions and coverage decisions are tracked across all competitive products.
-              </p>
-            </div>
+        <h3 className="text-lg font-semibold text-auri-white mb-4 flex items-center gap-2">
+          <AlertTriangle size={20} className="text-auri-blue" />
+          Market Access Intelligence
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-auri-dark border border-auri-gray/20 rounded-xl p-5">
+            <h4 className="text-xs font-semibold text-auri-blue uppercase tracking-wider mb-3">Pricing Context</h4>
+            <p className="text-sm text-auri-gray leading-relaxed">{MARKET_ACCESS_INTELLIGENCE.pricingContext}</p>
+          </div>
+          <div className="bg-auri-dark border border-auri-gray/20 rounded-xl p-5">
+            <h4 className="text-xs font-semibold text-auri-blue uppercase tracking-wider mb-3">REMS Program</h4>
+            <p className="text-sm text-auri-gray leading-relaxed">{MARKET_ACCESS_INTELLIGENCE.remsProgram}</p>
+          </div>
+          <div className="bg-auri-dark border border-auri-gray/20 rounded-xl p-5">
+            <h4 className="text-xs font-semibold text-auri-blue uppercase tracking-wider mb-3">Payer Challenges</h4>
+            <ul className="space-y-2">
+              {MARKET_ACCESS_INTELLIGENCE.payerChallenges.map((c, i) => (
+                <li key={i} className="text-sm text-auri-gray leading-relaxed flex items-start gap-2">
+                  <span className="text-auri-blue mt-1.5 flex-shrink-0">&#8226;</span>
+                  {c}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="bg-auri-dark border border-auri-gray/20 rounded-xl p-5">
+            <h4 className="text-xs font-semibold text-auri-blue uppercase tracking-wider mb-3">Orphan Drug Dynamics</h4>
+            <p className="text-sm text-auri-gray leading-relaxed">{MARKET_ACCESS_INTELLIGENCE.orphanDrugDynamics}</p>
           </div>
         </div>
       </section>
@@ -528,30 +546,45 @@ function PredictiveSignals({ momentum, weakSignals, sentimentVelocity }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-auri-black/50 text-auri-gray text-left">
-                  <th className="px-4 py-3 font-medium">KIT</th>
-                  <th className="px-4 py-3 font-medium">Velocity Score</th>
-                  <th className="px-4 py-3 font-medium">Direction</th>
-                  <th className="px-4 py-3 font-medium">Week-over-Week</th>
+                  <th className="px-4 py-3 font-medium">Associated KIT</th>
+                  <th className="px-4 py-3 font-medium text-center">Velocity Score</th>
+                  <th className="px-4 py-3 font-medium text-center">Direction</th>
+                  <th className="px-4 py-3 font-medium text-center">Latest WoW</th>
+                  <th className="px-4 py-3 font-medium">Interpretation</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-auri-gray/10">
-                {velocityData.map((item, i) => (
-                  <tr key={i} className="hover:bg-auri-black/20 transition-colors">
-                    <td className="px-4 py-3 font-medium text-auri-white">{item.name}</td>
-                    <td className="px-4 py-3">
-                      <span className="text-auri-blue font-semibold">{item.velocityScore}</span>
-                    </td>
-                    <td className="px-4 py-3"><DirectionBadge direction={item.direction} /></td>
-                    <td className="px-4 py-3">
-                      <span className={`flex items-center gap-1 ${
-                        parseFloat(item.weekOverWeek) >= 0 ? 'text-emerald-400' : 'text-red-400'
-                      }`}>
-                        {parseFloat(item.weekOverWeek) >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                        {parseFloat(item.weekOverWeek) >= 0 ? '+' : ''}{item.weekOverWeek}%
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {velocityData.map((item, i) => {
+                  const latestWoW = Array.isArray(item.weekOverWeek)
+                    ? item.weekOverWeek[item.weekOverWeek.length - 1]
+                    : item.weekOverWeek;
+                  const score = item.velocityScore;
+                  let interpretation = '';
+                  if (Math.abs(score) < 1) interpretation = 'Sentiment is stable with minimal movement. No immediate action required.';
+                  else if (score >= 3) interpretation = 'Strong positive momentum. Capitalize on favorable sentiment with proactive KOL engagement.';
+                  else if (score >= 1) interpretation = 'Moderately improving sentiment. Monitor for sustained trend before escalating resources.';
+                  else if (score <= -3) interpretation = 'Rapidly deteriorating sentiment. Requires urgent strategic response and field team alignment.';
+                  else interpretation = 'Negative sentiment drift detected. Investigate root causes and prepare mitigation messaging.';
+
+                  return (
+                    <tr key={i} className="hover:bg-auri-black/20 transition-colors">
+                      <td className="px-4 py-3 font-medium text-auri-white">{item.kitName}</td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`font-semibold ${score > 0 ? 'text-emerald-400' : score < 0 ? 'text-red-400' : 'text-auri-blue'}`}>{score > 0 ? '+' : ''}{score}</span>
+                      </td>
+                      <td className="px-4 py-3 text-center"><DirectionBadge direction={item.direction} /></td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`flex items-center justify-center gap-1 ${
+                          latestWoW >= 0 ? 'text-emerald-400' : 'text-red-400'
+                        }`}>
+                          {latestWoW >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                          {latestWoW >= 0 ? '+' : ''}{latestWoW}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-auri-gray text-xs leading-relaxed max-w-xs">{interpretation}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

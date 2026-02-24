@@ -483,7 +483,7 @@ export const MOMENTUM_INDICATORS = {
       id: 'sol-mi-4',
       signal: 'Payer Rebate Pressure Intensifying',
       currentState: 'Average net price erosion of 18% year-over-year driven by biosimilar reference pricing and competitive payer negotiations. International reference pricing cascading across EU markets.',
-      trajectory: 'rising',
+      trajectory: 'declining',
       timeToImpact: '3-6 months',
       confidence: 'medium',
       requiredAction: 'Coordinate with market access teams to model franchise value optimization scenarios. Evaluate strategic price adjustments versus managed decline approach.',
